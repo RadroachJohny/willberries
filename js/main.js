@@ -22,7 +22,6 @@ const buttonCart = document.querySelector('.button-cart'),
       clearAll = document.querySelector('.clear-all');
 
 const keyDownCheck = (e) => {  
-    console.log(e.key);
     if (e.which === 27) {
       closeModal();
     }  
@@ -45,7 +44,6 @@ const cart = {
     // {id: '090', name: 'Кеды Вдики', price: 9, count: 3},
   ],
   renderCart() {
-    console.log('rendering');
     cartTableGoods.textContent = '';
     // (({id, name, price, count}) - деструктурировали объкт
     this.cartGoods.forEach(({id, name, price, count}) => {
@@ -72,7 +70,6 @@ const cart = {
 
     cartTableTotal.textContent = totalPrice + '$';
 
-    console.log(this.cartGoods);
 
   },
   deleteAllGoods() {
@@ -200,7 +197,6 @@ modalClose.addEventListener('click', closeModal);
 buttonCart.addEventListener('click', openModal);
 
 const smoothScroll = (id) => {
-  console.log(id);
   document.querySelector(id).scrollIntoView({
     behavior: 'smooth',
     block: 'start',
@@ -213,7 +209,6 @@ const smoothScroll = (id) => {
   for (const scrollLink of scrollLinks) {
     scrollLink.addEventListener('click', (e) => {
       e.preventDefault();
-      console.log(this);
       const id = scrollLink.getAttribute('href');
       smoothScroll(id);
   
@@ -274,7 +269,6 @@ const filterCards = function(field, value) {
 navigationLink.forEach((link) => {
   link.addEventListener('click', function(e) {    
     e.preventDefault();
-    console.log(link);
     const field = link.dataset.field;
     const value = link.tagName === 'BUTTON' ? link.value : link.textContent;
     filterCards(field, value);
@@ -284,8 +278,58 @@ navigationLink.forEach((link) => {
 });
 
 
+// Day 4
+
+const modalForm = document.querySelector('.modal-form');
+
+  const postData = dataUser => fetch('server.php', {
+    method: 'POST',
+    body: dataUser,
+  });
+
+  modalForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    function checkForBlank(arr) {
+      return arr.value === '' || arr.value.trim() === '' 
+    }
+
+    const inputs = [...modalForm.querySelectorAll('input')];
+
+      if(inputs.some(checkForBlank) || cart.cartGoods.length === 0) {
+        alert('Заполни поля, пёс!');
+        
+
+      } else {
+        const formData = new FormData(modalForm);
+        formData.append('cart', JSON.stringify(cart.cartGoods));
+    
+        postData(formData)
+        .then(response => {
+          if (!response.ok) {
+            // Это вызывает catch
+            throw new Error(response.status)
+          }
+          alert('Ваш заказ успешно отправлен');
+          console.log(response.statusText);
+        })
+        .catch(err => {
+          alert('К сожалению произошла ощибка. Повторите попытку позже');
+          console.log(err);
+        })
+        .finally(() => {
+          closeModal();
+          modalForm.reset();
+          cart.deleteAllGoods();
+        });
+      }
+    
+
+ 
+  });
 
 
 
+const arr = [];
 
-
+console.log(JSON.stringify(arr).length);git 
