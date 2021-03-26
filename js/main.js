@@ -72,14 +72,13 @@ const cart = {
 
     cartTableTotal.textContent = totalPrice + '$';
 
-    console.log(this.cartGoods[0]);
+    console.log(this.cartGoods);
 
   },
   deleteAllGoods() {
     this.cartGoods = [];
     this.renderCart();
     this.goodsCartAmount();
-    console.log(this.cartGoods);
   },
   deleteGood(id) {
     this.cartGoods = this.cartGoods.filter((item) => {
@@ -116,18 +115,19 @@ const cart = {
     const goodItem = this.cartGoods.find(item => item.id === id);
     if (goodItem) {
       this.plusGood(id);
-    } else {
+    } else {      
       getGoods()
       .then(data => data.find(item => item.id === id))
+      // Деструктурируем item
       .then(({id, name, price }) => {
         this.cartGoods.push({
           id,
           name,
           price,
           count: 1,
-          
         });
         
+
         this.goodsCartAmount();
       });
       
@@ -136,13 +136,12 @@ const cart = {
    
   },
   goodsCartAmount() {
-    
-    console.log(888);
     const number = this.cartGoods.reduce((sum,item) => {
       return sum + item.count;
     },0);   
     cartCount.textContent = number ? number : '0';
-    
+
+   
   }
 };
 
@@ -156,8 +155,10 @@ document.body.addEventListener('click', (event) => {
   }
 });
 
-clearAll.addEventListener('click', () => {
-  cart.deleteAllGoods()});
+// clearAll.addEventListener('click', () => {
+//   cart.deleteAllGoods()});
+
+clearAll.addEventListener('click', cart.deleteAllGoods.bind(cart));
 
 cartTableGoods.addEventListener('click', (event) => {
   const target = event.target;
@@ -281,6 +282,9 @@ navigationLink.forEach((link) => {
 
   });
 });
+
+
+
 
 
 
